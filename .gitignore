@@ -1,6 +1,9 @@
 # PyCharm project settings
 .idea/
 
+# Ignore libs folder
+libs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
