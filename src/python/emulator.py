@@ -1,6 +1,7 @@
+# Works but executes command at next hit enter
+
 import sys
 import os
-import platform
 
 # Add the root directory to PYTHONPATH
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -17,15 +18,10 @@ class Shell:
 
     def read(self):
         if self.pty_process:
-            if platform.system() == 'Windows':
-                import msvcrt
-                if msvcrt.kbhit():
-                    return os.read(self.pty_process, 1024).decode()
-            else:
-                import select
-                rlist, _, _ = select.select([self.pty_process], [], [], 0.1)
-                if rlist:
-                    return os.read(self.pty_process, 1024).decode()
+            import select
+            rlist, _, _ = select.select([self.pty_process], [], [], 0.1)
+            if rlist:
+                return os.read(self.pty_process, 1024).decode()
         return ""
 
     def write(self, command):
@@ -42,11 +38,12 @@ class TerminalEmulator:
 
     def run(self):
         while True:
-            output = self.shell.read()
-            if output:
-                self.display_text(output)
             command = input("Enter command: ")
             self.shell.write(command + "\n")
+            self.display_text(command)
+
+            output = self.shell.read()
+            self.display_text(output)
 
 if __name__ == "__main__":
     emulator = TerminalEmulator()
